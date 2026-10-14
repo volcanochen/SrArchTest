@@ -55,7 +55,15 @@
 添加到主屏幕：
 
 - iPhone：Safari 打开页面 → 分享 → 添加到主屏幕
-- Android：Chrome 打开页面 → 右上角菜单 → 添加到主屏幕 / 安装应用
+- Android：Chrome 打开页面 → 右上角菜单 → **安装应用**（ Install app ）
+
+应用已按 PWA 标准配置了 manifest、Service Worker 与图标（`manifest.webmanifest`、`sw.js`、`icons/`）。满足以下条件时，Android Chrome 会显示「安装应用」，安装后获得独立图标、独立窗口和离线访问能力：
+
+1. 必须通过 **HTTPS**（或 `http://localhost`）访问，`file://` 直开无法安装
+2. 第一次打开页面后稍等几秒，让 Service Worker 注册完成
+3. 若菜单仍只显示「添加到主屏幕」，说明页面缓存还是旧版本，强制刷新（或清一次站点数据）再试
+
+安装后可从桌面图标直接进入，无网络也能刷题、看讲义（进度保存在本机）。
 
 ### 方式二：把文件夹传到手机，直接打开
 
@@ -103,14 +111,19 @@ python -m http.server 8000
 ```
 SrArchTest/
 ├── README.md
+├── index.html                  # 仓库根路径跳转页
 ├── exam-app/
-│   ├── index.html              # 应用入口
+│   ├── index.html              # 应用入口（含 PWA manifest / SW 注册）
+│   ├── manifest.webmanifest    # PWA 应用清单（安装所需）
+│   ├── sw.js                   # Service Worker（安装与离线缓存）
+│   ├── icons/                  # 应用图标（192/512/maskable）
 │   ├── css/style.css           # 移动优先样式
 │   ├── js/data.js              # 知识讲义、计划、案例与论文指南
 │   ├── js/app.js               # 交互、进度、课程、题库逻辑
 │   ├── js/question-bank.js     # 688 题扩展题库（自动生成）
 │   └── tools/
-│       └── build_question_bank.py  # 题库生成脚本
+│       ├── build_question_bank.py  # 题库生成脚本
+│       └── generate_icons.py       # PWA 图标生成脚本
 └── .workbuddy/                 # 项目记忆与原始资料
 ```
 
